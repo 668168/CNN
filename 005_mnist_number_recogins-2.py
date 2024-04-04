@@ -108,6 +108,8 @@ def train(dataloader, model, loss_fn, optimizer):
         optimizer.step()  # 每一步自动更新
 
         # 记录acc与loss
+        # 1 表示 1 的下标，即第二个维度，即为预测值.
+        # item 把一个标量Tensor转换为一个Python number
         train_acc += (pred.argmax(1) == y).type(torch.float).sum().item()
         train_loss += loss.item()
 
