@@ -57,3 +57,43 @@ opt = optim.SGD(model.parameters(), lr=lr, momentum=0.5)
 
 dilation：控制窗口中元素步幅的参数
 
+## 按照图片文件夹导入dataset
+```python
+total_data = datasets.ImageFolder(total_datadir,transform=train_transforms)
+
+```
+
+
+## 图像正则化 nn.BatchNorm2d(12)
+### 参数
+12：这个参数指定了输入特征图（即输入张量）的通道数。
+在这个例子中，12意味着期望输入的特征图有12个通道，即nn.BatchNorm2d层将对这12个通道的数据进行归一化处理。
+### 功能
+nn.BatchNorm2d层在训练过程中会对每个通道的数据进行归一化处理，使输出的数据均值接近0且标准差接近1。
+具体来说，对于每个通道，批量归一化层会计算该批次数据的均值和标准差，并使用下面的公式进行归一化：
+`self.bn1 = nn.BatchNorm2d(12)`
+
+
+## `test_img = transform(test_img)`
+
+PIL python image library -> torch.tensor
+
+##  `_,pred = torch.max(output,1)` 输出最大值和索引
+
+## 这俩函数区别. test_acc  += (target_pred.argmax(1) == target).type(torch.float).sum().item()
+
+
+## with torch.no_grad(): 不计算梯度
+
+## `model.eval()`的作用是不启用 Batch Normalization 和 Dropout。
+
+## 过拟合
+
+layers.Dropout(0.4) 作用是防止过拟合，提高模型的泛化能力。
+在上一篇文章花朵识别中，训练准确率与验证准确率相差巨大就是由于模型过拟合导致的
+
+
+## 当模型loss rate 到一定值, 保存模型
+## moduel 加入dropout 
+## 动态学习率调整
+
