@@ -10,7 +10,8 @@ import torchvision
 from torchvision import datasets
 from torchvision import transforms
 
-from torchinfo import summary
+# from torchinfo import summary
+from torchsummary import summary
 
 import math
 import numpy as np
@@ -107,7 +108,8 @@ class SequentialModel(nn.Module):
 
 
 model = SequentialModel().to(device)
-summary(model)
+# summary(model)
+summary(model, (3, 32, 32), 64)
 
 loss_fn    = nn.CrossEntropyLoss() # 创建损失函数
 learn_rate = 1e-2 # 学习率
