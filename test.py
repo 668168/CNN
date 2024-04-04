@@ -1,39 +1,13 @@
 import torch
-from torch import nn
-from torch.utils.data import DataLoader
-from torch import optim
-import torch.nn.functional as F
+import torch.nn as nn
 
-from torchvision import datasets
-from torchvision.transforms import ToTensor
+# 假设输入的特征图大小为 [batch_size, channels, height, width]
+input_tensor = torch.randn(1, 64, 10, 10)  # 例如，1个样本，64个通道，10x10的特征图
 
-import math
-import numpy as np
+# 创建一个AdaptiveAvgPool2d层，目标输出大小为 5x7
+adaptive_pool = nn.AdaptiveAvgPool2d((5, 7))
 
+# 应用自适应平均池化
+output_tensor = adaptive_pool(input_tensor)
 
-lr = 0.5  # learning rate
-epochs = 2  # how many epochs to train for
-batch_size = 64  # batch size
-
-# Download training data from open datasets.
-training_data = datasets.FashionMNIST(
-    root="data",
-    train=True,
-    download=True,
-    transform=ToTensor(),
-)
-
-# Download test data from open datasets.
-test_data = datasets.FashionMNIST(
-    root="data",
-    train=False,
-    download=True,
-    transform=ToTensor(),
-)
-
-# Create data loaders.
-train_dataloader = DataLoader(training_data, batch_size=batch_size)
-test_dataloader = DataLoader(test_data, batch_size=batch_size)
-
-# train_ds = TensorDataset(x_train, y_train)
-train_dl = test_dataloader
+print("Output size:", output_tensor.size())
