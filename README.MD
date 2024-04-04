@@ -53,4 +53,7 @@ opt = optim.SGD(model.parameters(), lr=lr)
 opt = optim.SGD(model.parameters(), lr=lr, momentum=0.5)
 ```
 
+## H_out = (H_in + 2*padding - dilation*(kernel_size-1) - 1)/stride + 1
+
+dilation：控制窗口中元素步幅的参数
 

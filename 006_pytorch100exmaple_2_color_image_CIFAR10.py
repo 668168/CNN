@@ -79,6 +79,7 @@ class SequentialModel(nn.Module):
         # 特征提取部分
         self.features = nn.Sequential(
             # H_out = (H_in + 2*padding - dilation*(kernel_size-1) - 1)/stride + 1
+            # dilation：控制窗口中元素步幅的参数
             nn.Conv2d(3, 64, kernel_size=3),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2),
