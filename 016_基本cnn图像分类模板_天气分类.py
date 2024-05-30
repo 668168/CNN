@@ -83,40 +83,39 @@ for X, y in test_dl:
 # step5. 模型定义
 import torch.nn.functional as F
 
+# 升级为 sequence 模式
 class Network_bn(nn.Module):
     def __init__(self):
-        super(Network_bn, self).__init__()
-        """
-        nn.Conv2d()函数：
-        第一个参数（in_channels）是输入的channel数量
-        第二个参数（out_channels）是输出的channel数量
-        第三个参数（kernel_size）是卷积核大小
-        第四个参数（stride）是步长，默认为1
-        第五个参数（padding）是填充大小，默认为0
-        """
-        self.conv1 = nn.Conv2d(in_channels=3, out_channels=12, kernel_size=5, stride=1, padding=0)
-        self.bn1 = nn.BatchNorm2d(12)
-        self.dropout = nn.Dropout(0.1)
-        self.conv2 = nn.Conv2d(in_channels=12, out_channels=12, kernel_size=5, stride=1, padding=0)
-        self.bn2 = nn.BatchNorm2d(12)
-        self.pool = nn.MaxPool2d(2,2)
-        self.conv4 = nn.Conv2d(in_channels=12, out_channels=24, kernel_size=5, stride=1, padding=0)
-        self.bn4 = nn.BatchNorm2d(24)
-        self.conv5 = nn.Conv2d(in_channels=24, out_channels=24, kernel_size=5, stride=1, padding=0)
-        self.bn5 = nn.BatchNorm2d(24)
-        self.fc1 = nn.Linear(24*50*50, len(classeNames))
+        super().__init__()
+        # 特征提取部分
+        self.features = nn.Sequential(
+            # H_out = (H_in + 2*padding - dilation*(kernel_size-1) - 1)/stride + 1
+            # dilation：控制窗口中元素步幅的参数
+            nn.Conv2d(3, 64, kernel_size=3),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2),
+            nn.Conv2d(64, 64, kernel_size=3),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2),
+            nn.Conv2d(64, 128, kernel_size=3),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2)
+            # 不管输入特征图input_tensor的尺寸是多少，
+            # 使用AdaptiveAvgPool2d((5, 7))之后，输出特征图的大小将会被调整为5x7。
+            # nn.AdaptiveAvgPool2d(1)
+        )
+
+        # 分类部分
+        self.classifier = nn.Sequential(
+            nn.Linear(512, 256),
+            nn.ReLU(),
+            nn.Linear(256, num_classes)
+        )
 
     def forward(self, x):
-        x = self.dropout(self.bn1(self.conv1(x)))
-        x = F.relu(x)
-        x = F.relu(self.bn2(self.conv2(x)))
-        x = self.pool(x)
-        x = F.relu(self.bn4(self.conv4(x)))
-        x = F.relu(self.bn5(self.conv5(x)))
-        x = self.pool(x)
-        x = x.view(-1, 24*50*50)
-        x = self.fc1(x)
-
+        x = self.features(x)
+        x = torch.flatten(x, start_dim=1)
+        x = self.classifier(x)
         return x
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
