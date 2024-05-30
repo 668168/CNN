@@ -277,3 +277,20 @@ plt.plot(epochs_range, test_loss, label='Test Loss')
 plt.legend(loc='upper right')
 plt.title('Training and Validation Loss')
 plt.show()
+
+# step11. 保存模型
+PATH = './model.pth'  # 保存的参数文件名
+torch.save(model.state_dict(), PATH)
+
+# 将参数加载到model当中
+model.load_state_dict(torch.load(PATH, map_location=device))
+
+# step12. 当模型loss rate 到一定值, 保存模型
+min_loss = 100000 #随便设置一个比较大的数
+for epoch in range(epochs):
+    train()
+    val_loss = val()
+    if val_loss < min_loss:
+       min_loss = val_loss
+       print("save model")
+       torch.save(net.state_dict(),'model.pth')
